@@ -10,6 +10,7 @@ const sequelizeConfig = new SequelizeLibrary(
     {
         host: dbConfig.HOST,
         dialect: dbConfig.dialect,
+        port: dbConfig.PORT,
         operatorsAliases: false,
     }
 )
