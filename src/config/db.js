@@ -4,5 +4,5 @@ module.exports ={
     PASSWORD:"eZWHu7zGMQVbmiXj1DuU",//la password
     DB:"railway",//el nombre de la base de datos que se usara
     dialect:"postgres", // el lenguaje sql a utilizar que es postgresql
-    port:"6868"
+    PORT:"6868"
 }
