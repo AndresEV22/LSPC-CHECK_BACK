@@ -22,7 +22,7 @@ exports.sendPasswordResetEmail = async (req, res) => {
     // Almacenar el token en la base de datos para su verificación posterior
     await user.update({resetPasswordToken: token, resetPasswordTokenExpiresAt: expireAt});
 
-    const resetUrl = `https://lspc-check.github.io/reset-password/${token}`;
+    const resetUrl = `http://localhost:4200/reset-password/${token}`;
     const message = {
         from: 'lspc.check@gmail.com',
         to: email,
