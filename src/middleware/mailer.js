@@ -4,8 +4,8 @@ const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     auth:{
-        user: 'lspcchecksoporte@gmail.com',
-        pass: 'dohnjtsdyuhwxceh'
+        user: 'jjear.lspc.check.adms@gmail.com',
+        pass: 'xjgbhukqhbzddqwr'
     }
 })
 
