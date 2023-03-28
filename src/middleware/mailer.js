@@ -5,9 +5,13 @@ const transporter = nodemailer.createTransport({
     port: 465,
     auth:{
         user: 'jjear.lspc.check.adms@gmail.com',
-        pass: 'xjgbhukqhbzddqwr'
+        pass: 'thopsavhmtlxctqf'
     }
 })
+
+transporter.verify().then(() => {
+    console.log('Listo para enviar emails 😎');
+});
 
 const sendEmail = async(message)=>{
     try {
