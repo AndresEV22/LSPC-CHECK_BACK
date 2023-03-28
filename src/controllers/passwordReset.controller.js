@@ -22,7 +22,7 @@ exports.sendPasswordResetEmail = async (req, res) => {
 
     const resetUrl = `https://lspc-check.github.io/reset-password/${token}`;
     const message = {
-        from: '"LSPC-CHECK"<jjear.lspc.check.adms@gmail.com>',
+        from: '"LSPC-CHECK"<mensajeriajl2@gmail.com>',
         to: email,
         subject: 'Restablecimiento de contraseña',
         html: `
