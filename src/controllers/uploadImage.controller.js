@@ -7,7 +7,7 @@ exports.updateImage  = async (req,res)=>{
         const id = req.params.id;
 
         if(req.file==undefined){
-            res.status(400).send({message: "Debes selecionar algun archivo."});
+            res.status(406).send({message: "Debes selecionar algun archivo."});
             return;
         }
 
@@ -26,7 +26,7 @@ exports.updateImage  = async (req,res)=>{
         });
 
         if (rowCount===0){
-            res.status(400).send({message: `el usuario con ID ${id} no se encuentra en la base de datos.`});
+            res.status(404).send({message: `el usuario con ID ${id} no se encuentra en la base de datos.`});
             return;
         }
 
@@ -35,7 +35,7 @@ exports.updateImage  = async (req,res)=>{
         res.status(200).send({message: `La imagen de el usuario con ID ${id} ha sido actualizada.`});
         return;
     } catch (error) {
-        res.status(400).send({message: `Hubo un error al  momento de actualizar el archivo: ${error}`});
+        res.status(500).send({message: `Hubo un error al  momento de actualizar el archivo: ${error}`});
         return;
     }
 };

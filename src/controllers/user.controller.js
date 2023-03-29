@@ -16,7 +16,7 @@ Profile.hasMany(User,{foreignKey: "idProfile"});// M - N
 exports.create = async (req,res)=>{
 //se hace una pequeña validacion de ejemplo para luego agregar mas validaciones a los otros campos
     if(!req.body.name || !req.body.lastname || !req.body.password || !req.body.email || !req.body.cardId || !req.body.idProfile || !req.body.state ){
-        res.status(400).send({ message:"El contenido no puede estar vacio" });
+        res.status(204).send({ message:"El contenido no puede estar vacio" });
         return;
     }
     // crear un registro
@@ -38,7 +38,7 @@ exports.create = async (req,res)=>{
 
     try{
         const data = await User.create(user);
-        res.send(data);
+        res.status(201).send(data);
     }catch(err){
         res.status(500).send({
             message : err.message || "Hubo un error inesperado"
@@ -56,7 +56,7 @@ exports.findAll = async (req,res)=>{
 
     try {
         const data = await User.findAll({include:{ model: Profile, attributes: ["name"] } , where:condition });
-        res.send(data);
+        res.status(200).send(data);
 
     } catch (err) {
         res.status(500).send({message: err.message || "Hubo un error al momento de traer a los registros"});
@@ -67,7 +67,7 @@ exports.findAll = async (req,res)=>{
 exports.countUsers = async (req,res)=>{
     try {
         const data = await User.findAll({ attributes:[[Sequelize.fn('COUNT',Sequelize.col('id_user')),'n_users']] });
-        res.send(data);
+        res.status(200).send(data);
 
     } catch (err) {
         res.status(500).send({message: err.message || "Hubo un error al momento de contar los registros"});
@@ -85,9 +85,9 @@ exports.findOne = async (req,res)=>{
     try{
         const data = await User.findOne({ include:[{ model: Profile, attributes: ["name"]},{ model: Computer, attributes:["id_computer","id_serial","mark"]}], where: condition});
         if(data){
-            res.send(data);
+            res.status(200).send(data);
         }else{
-            res.status(404).send({
+            res.status(409).send({
                 message: `No se encontro el registro con el id=${idUser}`
             })
         }
@@ -114,9 +114,9 @@ exports.update = async (req, res) => {
         const num = await User.update(req.body, {where: { idUser: id }});
 
         if (num == 1) {
-            res.send({ message: 'El registro fue actualizado' });
+            res.status(200).send({ message: 'El registro fue actualizado' });
         } else {
-            res.status(500).send({ message: 'Error al actualizar el registro con el id=' + id });
+            res.status(409).send({ message: 'Error al actualizar el registro con el id=' + id });
         }
     } catch (error) {
         res.status(500).send({ message: 'Error al actualizar el registro con el id=' + id });
@@ -132,11 +132,11 @@ exports.delete= async (req,res)=>{
             where:{idUser:id}
             });
         if(num==1){
-            res.send({
+            res.status(200).send({
                 message: "El registro fue eliminado exitosamente"
             });
         }else{
-            res.send({
+            res.status(409).send({
                 message: `No se pudo eliminar el registro id=${id}`
             });
         }
@@ -155,29 +155,29 @@ exports.login = async (req, res)=>{
     try {
         const user = await User.findOne({ include:{ model: Profile, attributes: ["name"] }, where: { cardId: cardId}});
         if (user.state === 'Inactivo') {
-            res.status(305).send({
+            res.status(401).send({
                 message:"Perfil inactivo comunicate con soporte"
             });
         }else{
             if (!user) {
-                res.status(404).json({ message: "Algo salio mal" });
+                res.status(409).json({ message: "Algo salio mal" });
             } else { 
                 const isMatched = bcrypt.compareSync(password, user.password);
     
                 if (!isMatched){
-                    res.status(501).send({ message: "Algo salio mal" });
+                    res.status(406).send({ message: "Algo salio mal" });
                 } else {        
                     const { idUser,name, secName, lastname, secSurname, cardId, email, idProfile, state, password, tbl_profile } = user
                     
                     let data = JSON.stringify({ idUser, name, secName, lastname, secSurname, cardId, email, idProfile, state, password, tbl_profile});
                     
                     const token = jwt.sign(data, process.env.AUTH_TOKEN_KEY);
-                    res.json({token});
+                    res.status(200).json({token});
                 }
             }
         }
     } catch (error) {
-        res.status(500).send({
+        res.status(401).send({
             message:"No se pudo iniciar sesion"
         });
     }

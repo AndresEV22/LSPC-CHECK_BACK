@@ -4,33 +4,22 @@ const Profile = db.profile;
 const Op = db.SequelizeLbr.Op;
 
 //crear y guardar
-
-
 exports.create = async (req,res) =>{
     //se hace una pequeña validacion de ejemplo para luego agregar mas validaciones a los otros campos
     if(!req.body.name){
-        res.status(400).send({
-            message: "El contenido no puede estar vacio"
-        });
-        return;
+        return res.status(204).send({  message: "El contenido no puede estar vacio" });
     }
-
     //crear un registro
-
     const profile={
         idProfile:req.body.idProfile,
         name : req.body.name
     };
-
     // guardar un registro en la base de datos
-
     try {
         const data = await Profile.create(profile);
-        res.send(data);
+        res.status(201).send(data);
     } catch (err) {
-        res.status(500).send({
-            message: err.mesagge || "Hubo un error al crear"
-        })
+        res.status(500).send({ message: err.mesagge || "Hubo un error al crear" });
     }
 };
 
@@ -41,26 +30,20 @@ exports.findAll = async (req,res)=>{
     var condition = idProfile? {idProfile:{[Op.iLike]: `%${idProfile}%`}}: null;
 
     try {
-        const data = await Profile.findAll({where:condition})
-        res.send(data);
+        const data = await Profile.findAll({where:condition});
+        res.status(200).send(data);
     } catch (err) {
-        res.status(500).send({
-            message: err.message || 'No se pudo encontrar todos los registros'
-        })        
+        res.status(404).send({ message: err.message || 'No se pudo encontrar todos los registros' });
     }
-
-
-};
+}
 
 // listar la cantidad de los registro de la tabla profile 
 exports.countProfiles = async (req,res)=>{
     try {
         const data = await Profile.findAll({attributes:[[Sequelize.fn('COUNT', Sequelize.col('id_profile')), 'n_profiles']]});
-        res.send(data);
+        res.status(200).send(data);
     } catch (err) {
-        res.status(500).send({
-            message: err.message || 'No se pudo contar los registros'
-        })        
+        res.status(404).send({ message: err.message || 'No se pudo contar los registros' });
     }
 };
 
@@ -72,70 +55,43 @@ exports.findOne = async (req,res)=>{
     try{
         const data = await Profile.findByPk(id);
         if(data){
-            res.send(data);
+            res.status(200).send(data);
         }else{
-            res.status(404).send({
-                message: `No se encontro el registro con el id=${id}`
-            })
+            res.status(404).send({ message: `No se encontro el registro con el id=${id}` });
         }
     }catch(err){
-       res.status(500).send({
-            message: err.message || "Error id= "+id
-       })
-    }
-    
-
-    
+        res.status(500).send({ message: err.message || "Error id= "+id });
+    }  
 };
 
 //actualizar registros
 exports.update = async (req,res)=>{
     const id = req.params.id;
-
     try{
-        const num = await Profile.update(req.body,{
-            where:{idProfile:id}
-        })
+        const num = await Profile.update(req.body,{ where:{idProfile:id} });
         if(num==1){
-            res.send({
-                message:"El registro fue actualizado"
-            })
+            res.status(200).send({ message:"El registro fue actualizado" });
         }else{
-            res.send({
-                message:`No se pudo actualizar el registro con el id=${id}`
-            })
+            res.status(409).send({ message:`No se pudo actualizar el registro con el id=${id}` });
         }
     }catch(err){
-        res.status(500).send({
-            message: err.message || "Error al actualizar el registro con id="+id
-        })
+        res.status(500).send({ message: err.message || "Error al actualizar el registro con id="+id });
     }
-        
 };
 
 //eliminar registro por id
 
 exports.delete = async (req,res)=>{
     const id = req.params.id;
-
-
     try {
-        const num =   await  Profile.destroy({
-            where:{idProfile:id}
-        })
+        const num =   await  Profile.destroy({ where:{idProfile:id} });
         if(num==1){
-            res.send({
-                message: "El registro fue eliminado exitosamente"
-            });
+            res.status(200).send({ message: "El registro fue eliminado exitosamente" });
         }else{
-            res.send({
-                message: `No se pudo eliminar el registro id=${id}`
-            });
+            res.status(409).send({ message: `No se pudo eliminar el registro id=${id}` });
         }
     } catch (err) {
-        res.status(500).send({
-            message : err.message || "No puedes eliminar el registro"
-        })
+        res.status(500).send({ message : err.message || "No puedes eliminar el registro" });
     }
 };
 
